@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Transcription and Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+        }
+        .scrollable-box {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        #urlInput {
+            width: 70%;
+            padding: 5px;
+        }
+        #submitButton {
+            padding: 5px 10px;
+        }
+        .summary-item {
+            margin-bottom: 15px;
+        }
+        .timestamp {
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Transcription and Summary</h1>
+    <input type="text" id="urlInput" placeholder="Enter YouTube URL">
+    <button id="submitButton">Transcribe and Summarize</button>
+    <div class="container">
+        <div class="column">
+            <h2>Transcript</h2>
+            <div id="transcriptBox" class="scrollable-box"></div>
+        </div>
+        <div class="column">
+            <h2>Summary</h2>
+            <div id="summaryBox" class="scrollable-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const submitButton = document.getElementById('submitButton');
+        const transcriptBox = document.getElementById('transcriptBox');
+        const summaryBox = document.getElementById('summaryBox');
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        submitButton.addEventListener('click', async () => {
+            const youtubeUrl = urlInput.value;
+            if (!youtubeUrl) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+
+            transcriptBox.textContent = 'Processing...';
+            summaryBox.textContent = 'Processing...';
+            submitButton.disabled = true;
+
+            try {
+                const response = await fetch('/transcribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ youtube_url: youtubeUrl }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    transcriptBox.textContent = data.transcript;
+
+                    summaryBox.innerHTML = data.summaries.map(summary => `
+                        <div class="summary-item">
+                            <div class="timestamp">${formatTime(summary.start_time)} - ${formatTime(summary.end_time)}</div>
+                            <p>${summary.summary}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    transcriptBox.textContent = `Error: ${data.error}`;
+                    summaryBox.textContent = `Error: ${data.error}`;
+                }
+            } catch (error) {
+                transcriptBox.textContent = `Error: ${error.message}`;
+                summaryBox.textContent = `Error: ${error.message}`;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
