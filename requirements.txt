@@ -3,3 +3,4 @@ youtube-transcript-api==0.6.2
 openai==1.13.3
 python-dotenv==1.0.1
 Werkzeug==3.0.4
+Flask-Cors==4.0.1
