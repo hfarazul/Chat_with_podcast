@@ -1,6 +1,7 @@
 import PodcastSummary from '../components/PodcastSummary'
 
 export default function Home() {
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <header className="bg-white shadow-sm">
