@@ -27,7 +27,17 @@ export default function PodcastSummary() {
       })
       const data = await response.json()
       setTranscript(data.transcript)
-      setSummaries(data.summaries)
+
+      // Generate summary using OpenAI
+      const summaryResponse = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ transcript: data.transcript }),
+      })
+      const summaryData = await summaryResponse.json()
+      setSummaries(summaryData.summaries)
     } catch (error) {
       console.error('Error:', error)
     }
