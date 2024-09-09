@@ -21,7 +21,7 @@ async function getChatResponse(transcript: string, question: string): Promise<st
   If the answer is not in the podcast content, say so politely.`
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4-turbo-preview",
+    model: "gpt-4o",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: `Podcast content: ${transcript}\n\nQuestion: ${question}` }

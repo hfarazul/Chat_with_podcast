@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   role: 'user' | 'assistant';
@@ -46,7 +47,32 @@ export default function ChatBox({ transcript }: ChatBoxProps) {
             <p className={`font-semibold ${message.role === 'user' ? 'text-indigo-600' : 'text-green-600'}`}>
               {message.role === 'user' ? 'You:' : 'Podcast AI:'}
             </p>
-            <div className="ml-4" dangerouslySetInnerHTML={{ __html: message.content }} />
+            <ReactMarkdown
+              className="ml-4"
+              components={{
+                h3: ({node, ...props}) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
+                strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                p: ({node, ...props}) => <p className="mb-4" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc list-inside mb-4" {...props} />,
+                li: ({node, ...props}) => <li className="mb-1" {...props} />,
+              }}
+            >
+              {message.content.replace(/<\/?h3>|<\/?strong>|<\/?p>|<\/?ul>|<\/?li>/g, (match) => {
+                const replacements: {[key: string]: string} = {
+                  '<h3>': '### ',
+                  '</h3>': '\n\n',
+                  '<strong>': '**',
+                  '</strong>': '**',
+                  '<p>': '',
+                  '</p>': '\n\n',
+                  '<ul>': '',
+                  '</ul>': '\n',
+                  '<li>': '- ',
+                  '</li>': '\n'
+                };
+                return replacements[match] || match;
+              })}
+            </ReactMarkdown>
           </div>
         ))}
       </div>
