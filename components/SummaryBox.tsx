@@ -12,11 +12,11 @@ export default function SummaryBox({ summary }: SummaryBoxProps) {
         {summary ? (
           <ReactMarkdown
             components={{
-              h3: ({node, ...props}) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
-              strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
-              p: ({node, ...props}) => <p className="mb-4" {...props} />,
-              ul: ({node, ...props}) => <ul className="list-disc list-inside mb-4" {...props} />,
-              li: ({node, ...props}) => <li className="mb-1" {...props} />,
+              h3: ({...props}) => <h3 className="text-xl font-semibold mt-4 mb-2" {...props} />,
+              strong: ({...props}) => <strong className="font-bold" {...props} />,
+              p: ({...props}) => <p className="mb-4" {...props} />,
+              ul: ({...props}) => <ul className="list-disc list-inside mb-4" {...props} />,
+              li: ({...props}) => <li className="mb-1" {...props} />,
             }}
           >
             {summary.replace(/<\/?h3>|<\/?strong>|<\/?p>|<\/?ul>|<\/?li>/g, (match) => {
