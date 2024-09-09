@@ -6,15 +6,9 @@ import SummaryBox from './SummaryBox'
 import ChatBox from './ChatBox'
 import TranscriptBox from './TranscriptBox'
 
-export interface Summary {
-  start_time: number;
-  end_time: number;
-  summary: string;
-}
-
 export default function PodcastSummary() {
   const [transcript, setTranscript] = useState<string>('')
-  const [summaries, setSummaries] = useState<Summary[]>([])
+  const [summary, setSummary] = useState<string>('')
 
   const handleTranscribe = async (youtubeUrl: string) => {
     try {
@@ -37,7 +31,7 @@ export default function PodcastSummary() {
         body: JSON.stringify({ transcript: data.transcript }),
       })
       const summaryData = await summaryResponse.json()
-      setSummaries(summaryData.summaries)
+      setSummary(summaryData.summary)
     } catch (error) {
       console.error('Error:', error)
     }
@@ -50,7 +44,7 @@ export default function PodcastSummary() {
       <TranscribeForm onTranscribe={handleTranscribe} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-        <SummaryBox summaries={summaries} />
+        <SummaryBox summary={summary} />
         <ChatBox transcript={transcript} />
       </div>
 

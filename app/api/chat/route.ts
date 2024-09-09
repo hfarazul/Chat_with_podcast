@@ -8,7 +8,7 @@ const openai = new OpenAI({
 async function getChatResponse(transcript: string, question: string): Promise<string> {
   const systemPrompt = `You are an AI assistant tasked with answering questions about a podcast.
   Your answers should be:
-  - Strictly based on the podcast content
+  - Very very important instruction for you: Strictly based on the podcast content, if the question asked is not relevant to the podcast, or it was not discussed, answer that the topic was not covered.
   - Crisp and precise
   - Include the tone of the speaker when relevant
 
