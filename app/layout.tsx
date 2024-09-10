@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import Script from 'next/script'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <script
+        <Script
           type="text/javascript"
           src="https://spaces-us-1.nyc3.digitaloceanspaces.com/RMieIJj0M7RIDmr7/AUcWfqBs-CO-IgP2qUT7n/pixel.js"
           defer={true}
