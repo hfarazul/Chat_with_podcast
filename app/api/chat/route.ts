@@ -1,43 +1,56 @@
 import { NextResponse } from 'next/server'
-import OpenAI from 'openai'
+import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+const bedrockRuntime = new BedrockRuntimeClient({
+  region: "us-east-1", // replace with your preferred region
+});
 
-async function getChatResponse(transcript: string, question: string): Promise<string> {
-  const systemPrompt = `You are an AI assistant tasked with answering questions about a podcast.
-  Your answers should be:
-  - Very very important instruction for you: Strictly based on the podcast content, if the question asked is not relevant to the podcast, or it was not discussed, answer that the topic was not covered.
-  - Crisp and precise
-  - Include the tone of the speaker when relevant
-
-  Format your responses with:
-  - Use <h3> tags for main headings
-  - Use <strong> tags for important concepts
-  - Use <p> tags for paragraphs
-  - Use <ul> and <li> tags for lists if needed
-
-  If the answer is not in the podcast content, say so politely.`
-
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: `Podcast content: ${transcript}\n\nQuestion: ${question}` }
-    ]
-  })
-  return response.choices[0].message.content || ''
-}
-
-export async function POST(request: Request) {
-  const { transcript, question } = await request.json()
+async function chatWithClaude(userMessage: string) {
+  const params = {
+    modelId: "anthropic.claude-3-sonnet-20240229-v1:0",
+    contentType: "application/json",
+    accept: "application/json",
+    body: JSON.stringify({
+      anthropic_version: "bedrock-2023-05-31",
+      max_tokens: 300,
+      messages: [
+        {
+          role: "user",
+          content: userMessage
+        }
+      ],
+      temperature: 0.7,
+      top_p: 0.9,
+    })
+  };
 
   try {
-    const answer = await getChatResponse(transcript, question)
-    return NextResponse.json({ answer })
+    const command = new InvokeModelCommand(params);
+    const response = await bedrockRuntime.send(command);
+    const responseBody = JSON.parse(new TextDecoder().decode(response.body));
+    return responseBody.content[0].text;
   } catch (error) {
-    console.error('An error occurred during chat:', error)
-    return NextResponse.json({ error: `An error occurred: ${(error as Error).message}` }, { status: 500 })
+    console.error('Error in chatWithClaude:', error);
+    throw error;
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const { transcript, question } = await req.json();
+
+    const prompt = `Here's a transcript of a podcast: ${transcript}\n\nQuestion: ${question}`;
+
+    const answer = await chatWithClaude(prompt);
+
+    return new Response(JSON.stringify({ answer }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error in chat route:', error);
+    return new Response(JSON.stringify({ error: 'An error occurred while processing your request.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
