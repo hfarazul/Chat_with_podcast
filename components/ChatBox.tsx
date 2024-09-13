@@ -7,11 +7,10 @@ interface Message {
 }
 
 interface ChatBoxProps {
-  transcript?: string;
   onAsk: (question: string) => Promise<string>;
 }
 
-export default function ChatBox({ transcript, onAsk }: ChatBoxProps) {
+export default function ChatBox({ onAsk }: ChatBoxProps) {
   const [chatHistory, setChatHistory] = useState<Message[]>([])
   const [question, setQuestion] = useState<string>('')
 

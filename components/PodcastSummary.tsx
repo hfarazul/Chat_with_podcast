@@ -91,7 +91,7 @@ export default function PodcastSummary() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <SummaryBox summary={summary} />
-        <ChatBox transcript={transcript} onAsk={handleAsk} />
+        <ChatBox onAsk={handleAsk} />
       </div>
 
       <TranscriptBox transcript={transcript} />
