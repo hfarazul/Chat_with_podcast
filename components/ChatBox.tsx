@@ -51,21 +51,7 @@ export default function ChatBox({ transcript, onAsk }: ChatBoxProps) {
                 li: ({...props}) => <li className="mb-1" {...props} />,
               }}
             >
-              {message.content && message.content.replace(/<\/?h3>|<\/?strong>|<\/?p>|<\/?ul>|<\/?li>/g, (match) => {
-                const replacements: {[key: string]: string} = {
-                  '<h3>': '### ',
-                  '</h3>': '\n\n',
-                  '<strong>': '**',
-                  '</strong>': '**',
-                  '<p>': '',
-                  '</p>': '\n\n',
-                  '<ul>': '',
-                  '</ul>': '\n',
-                  '<li>': '- ',
-                  '</li>': '\n'
-                };
-                return replacements[match] || match;
-              }) || ''}
+              {message.content}
             </ReactMarkdown>
           </div>
         ))}

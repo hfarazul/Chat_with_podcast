@@ -5,6 +5,23 @@ interface SummaryBoxProps {
 }
 
 export default function SummaryBox({ summary }: SummaryBoxProps) {
+  // Function to clean up the summary text and convert HTML to markdown
+  const cleanSummary = (text: string) => {
+    return text
+      .replace(/<h3>/g, '### ')
+      .replace(/<\/h3>/g, '\n\n')
+      .replace(/<strong>/g, '**')
+      .replace(/<\/strong>/g, '**')
+      .replace(/<p>/g, '')
+      .replace(/<\/p>/g, '\n\n')
+      .replace(/<ul>/g, '')
+      .replace(/<\/ul>/g, '\n')
+      .replace(/<li>/g, '- ')
+      .replace(/<\/li>/g, '\n')
+      .replace(/(\n|\r\n){3,}/g, '\n\n') // Replace triple or more newlines with double newlines
+      .trim();
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4 text-indigo-800">Summary</h2>
@@ -19,21 +36,7 @@ export default function SummaryBox({ summary }: SummaryBoxProps) {
               li: ({...props}) => <li className="mb-1" {...props} />,
             }}
           >
-            {summary.replace(/<\/?h3>|<\/?strong>|<\/?p>|<\/?ul>|<\/?li>/g, (match) => {
-              const replacements: {[key: string]: string} = {
-                '<h3>': '### ',
-                '</h3>': '\n\n',
-                '<strong>': '**',
-                '</strong>': '**',
-                '<p>': '',
-                '</p>': '\n\n',
-                '<ul>': '',
-                '</ul>': '\n',
-                '<li>': '- ',
-                '</li>': '\n'
-              };
-              return replacements[match] || match;
-            })}
+            {cleanSummary(summary)}
           </ReactMarkdown>
         ) : (
           <div className="text-gray-500">No summary available yet.</div>

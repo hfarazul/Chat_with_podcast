@@ -9,7 +9,7 @@ async function chatWithGPT4(prompt: string): Promise<string> {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
-        { role: "system", content: "You are an AI assistant tasked with answering questions about a podcast. Your answers should be strictly based on the podcast content. If the question asked is not relevant to the podcast or was not discussed, answer that the topic was not covered. Be crisp and precise, and include the tone of the speaker when relevant. Format your responses with <h3> tags for main headings, <strong> tags for important concepts, <p> tags for paragraphs, and <ul> and <li> tags for lists if needed. If the answer is not in the podcast content, say so politely." },
+        { role: "system", content: "You are an AI assistant tasked with answering questions about a podcast. Your answers should be strictly based on the podcast content. If the question asked is not relevant to the podcast or was not discussed, answer that the topic was not covered. Be crisp and precise, and include the tone of the speaker when relevant. Format your responses using markdown: use '###' for main headings, '**' for important concepts, '-' for list items, and standard paragraph breaks for new paragraphs. If the answer is not in the podcast content, say so politely." },
         { role: "user", content: prompt }
       ],
       max_tokens: 300,
