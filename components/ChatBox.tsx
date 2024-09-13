@@ -8,9 +8,10 @@ interface Message {
 
 interface ChatBoxProps {
   transcript: string;
+  onAsk: (question: string) => Promise<string>;
 }
 
-export default function ChatBox({ transcript }: ChatBoxProps) {
+export default function ChatBox({ transcript, onAsk }: ChatBoxProps) {
   const [chatHistory, setChatHistory] = useState<Message[]>([])
   const [question, setQuestion] = useState<string>('')
 
@@ -23,15 +24,8 @@ export default function ChatBox({ transcript }: ChatBoxProps) {
     setQuestion('')
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ transcript, question }),
-      })
-      const data = await response.json()
-      setChatHistory([...chatHistory, newMessage, { role: 'assistant', content: data.answer }])
+      const answer = await onAsk(question)
+      setChatHistory([...chatHistory, newMessage, { role: 'assistant', content: answer }])
     } catch (error) {
       console.error('Error:', error)
       setChatHistory([...chatHistory, newMessage, { role: 'assistant', content: 'Error occurred while processing your question.' }])
