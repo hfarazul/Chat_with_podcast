@@ -7,7 +7,7 @@ interface Message {
 }
 
 interface ChatBoxProps {
-  transcript: string;
+  transcript?: string;
   onAsk: (question: string) => Promise<string>;
 }
 
