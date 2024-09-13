@@ -28,7 +28,7 @@ async function createFinalSummary(summaries: string[]): Promise<string> {
   const context = summaries.join('\n\n');
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: "You are a helpful assistant that creates a final summary of podcast content based on multiple chunk summaries. Please format your summary with proper structure, including <h3> tags for main headings, <strong> tags for important concepts, <p> tags for paragraphs, and <ul> and <li> tags for lists if needed. Your summary should be concise and capture the main points." },
         { role: "user", content: `Create a final summary of no more than 900 words based on these chunk summaries:\n\n${context}\n\nFinal Summary:` }
